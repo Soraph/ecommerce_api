@@ -21,9 +21,10 @@ class OrdersResource(Resource):
         parser.add_argument('items', type=is_valid_item_list, required=True)
         args = parser.parse_args(strict=True)
 
-        try:
-            user = User.get(User.uuid == args['user'])
-        except User.DoesNotExist:
+        user_query = User.select().where(User.uuid == args['user'])
+        if user_query.exists():
+            user = user_query.get()
+        else:
             return None, BAD_REQUEST
 
         total_price = 0
@@ -69,9 +70,10 @@ class OrderResource(Resource):
             return None, NOT_FOUND
 
     def put(self, uuid):
-        try:
-            order = Order.get(Order.uuid == uuid)
-        except Order.DoesNotExist:
+        order_query = Order.select().where(Order.uuid == uuid)
+        if order_query.exists():
+            order = order_query.get()
+        else:
             return None, NOT_FOUND
 
         parser = reqparse.RequestParser()
@@ -109,9 +111,10 @@ class OrderResource(Resource):
         return order.json(), OK
 
     def delete(self, uuid):
-        try:
-            order = Order.get(Order.uuid == uuid)
-        except Order.DoesNotExist:
+        order_query = Order.select().where(Order.uuid == uuid)
+        if order_query.exists():
+            order = order_query.get()
+        else:
             return None, NOT_FOUND
 
         with database.transaction():
