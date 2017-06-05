@@ -64,7 +64,7 @@ class OrdersResource(Resource):
 class OrderResource(Resource):
     def get(self, uuid):
         try:
-            return Order.get(uuid=uuid).json(), OK
+            return Order.get(Order.uuid == uuid).json(), OK
         except Order.DoesNotExist:
             return None, NOT_FOUND
 
