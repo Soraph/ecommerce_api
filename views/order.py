@@ -118,10 +118,7 @@ class OrderResource(Resource):
             return None, NOT_FOUND
 
         with database.transaction():
-            order_items = OrderItem.select().where(
-                OrderItem.order == order)
-
-            for order_item in order_items:
+            for order_item in order.order_items:
                 order_item.delete_instance()
 
             order.delete_instance()
