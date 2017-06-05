@@ -70,7 +70,7 @@ class OrderResource(Resource):
 
     def put(self, uuid):
         try:
-            order = Order.get(uuid=uuid)
+            order = Order.get(Order.uuid == uuid)
         except Order.DoesNotExist:
             return None, NOT_FOUND
 
