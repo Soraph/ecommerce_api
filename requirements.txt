@@ -15,3 +15,4 @@ gunicorn==19.7.1
 jsonschema==2.6.0
 psycopg2==2.7.1
 cloudinary==1.8.0
+gunicorn==19.7.1
