@@ -35,16 +35,15 @@ class BaseTest:
         app.config['TESTING'] = True
         app.config['CLOUDINARY_DEFAULT_TAG'] = 'test_pictures'
 
+        cls.DEFAULT_TAG = app.config['CLOUDINARY_DEFAULT_TAG']
         cls.app = app.test_client()
 
     @classmethod
     def teardown_class(cls):
-        DEFAULT_TAG = app.config['CLOUDINARY_DEFAULT_TAG']
-
-        response = resources_by_tag(DEFAULT_TAG)
+        response = resources_by_tag(cls.DEFAULT_TAG)
         resources = response.get('resources', [])
         if resources:
-            delete_resources_by_tag(DEFAULT_TAG)
+            delete_resources_by_tag(cls.DEFAULT_TAG)
 
     def setup_method(self):
         for table in self.tables:
