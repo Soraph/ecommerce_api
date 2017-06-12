@@ -8,6 +8,8 @@ from http.client import OK
 from http.client import BAD_REQUEST
 from http.client import UNAUTHORIZED
 from flask import current_app, g
+import cloudinary.uploader
+import cloudinary.api
 import uuid
 import os
 
@@ -187,11 +189,7 @@ class ItemPicturesResource(Resource):
             item=item
         )
 
-        save_path = os.path.join('.', config['UPLOADS_FOLDER'], 'items', str(item_id))
-        new_filename = secure_filename('.'.join([str(picture.uuid), extension]))
-
-        os.makedirs(save_path, exist_ok=True)
-
-        image.save(os.path.join(save_path, new_filename))
+        cloudinary.uploader.upload(image, public_id=str(picture.uuid),
+                                   tags=config['CLOUDINARY_DEFAULT_TAG'])
 
         return picture.json(), CREATED
