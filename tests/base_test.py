@@ -1,3 +1,5 @@
+from cloudinary.api import delete_resources_by_tag, resources_by_tag
+from models import Item, User, Address, Order, OrderItem, Picture
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 from models import Item, User, Address, Order, OrderItem, Favorites, Picture
@@ -36,12 +38,19 @@ class BaseTest:
 
         app.config['TESTING'] = True
         app.config['UPLOADS_FOLDER'] = cls.temp_dir
+        app.config['CLOUDINARY_DEFAULT_TAG'] = 'test_pictures'
 
         cls.app = app.test_client()
 
     @classmethod
     def teardown_class(cls):
+        DEFAULT_TAG = app.config['CLOUDINARY_DEFAULT_TAG']
+
         shutil.rmtree(cls.temp_dir)
+        response = resources_by_tag(DEFAULT_TAG)
+        resources = response.get('resources', [])
+        if resources:
+            delete_resources_by_tag(DEFAULT_TAG)
 
     def setup_method(self):
         for table in self.tables:
