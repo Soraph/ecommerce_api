@@ -1,5 +1,4 @@
 import simplejson as json
-
 from flask import Flask, make_response
 from flask_restful import Api
 
@@ -17,6 +16,7 @@ app = Flask(__name__)
 api = Api(app)
 app.config['UPLOADS_FOLDER'] = 'images'
 app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'png'])
+app.config['CLOUDINARY_DEFAULT_TAG'] = 'item_picture'
 
 
 @api.representation('application/json')
