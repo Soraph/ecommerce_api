@@ -4,8 +4,6 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 from models import Item, User, Address, Order, OrderItem, Favorites, Picture
 from peewee import SqliteDatabase
-from tempfile import mkdtemp
-import shutil
 
 from views.user import crypt_password
 from app import app
@@ -34,10 +32,7 @@ class BaseTest:
             table._meta.database = database
             table.create_table()
 
-        cls.temp_dir = mkdtemp()
-
         app.config['TESTING'] = True
-        app.config['UPLOADS_FOLDER'] = cls.temp_dir
         app.config['CLOUDINARY_DEFAULT_TAG'] = 'test_pictures'
 
         cls.app = app.test_client()
@@ -46,7 +41,6 @@ class BaseTest:
     def teardown_class(cls):
         DEFAULT_TAG = app.config['CLOUDINARY_DEFAULT_TAG']
 
-        shutil.rmtree(cls.temp_dir)
         response = resources_by_tag(DEFAULT_TAG)
         resources = response.get('resources', [])
         if resources:
