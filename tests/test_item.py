@@ -1,5 +1,6 @@
 import json
 from werkzeug.datastructures import FileStorage
+from cloudinary.api import resources_by_tag
 from http.client import CREATED
 from http.client import NO_CONTENT
 from http.client import NOT_FOUND
@@ -7,7 +8,6 @@ from http.client import OK
 from http.client import BAD_REQUEST
 from http.client import UNAUTHORIZED
 from models import Item
-import hashlib
 import uuid
 import os
 
@@ -425,12 +425,11 @@ class TestItems(BaseTest):
         assert image_from_server['title'] == picture_data['title']
         assert image_from_server['extension'] == 'jpg'
 
-        server_image_path = os.path.join(
-            self.temp_dir, 'items', str(item.uuid), '{}.jpg'.format(image_from_server['uuid']))
+        response = resources_by_tag(self.DEFAULT_TAG)
+        resources = response.get('resources', [])
+        assert len(resources) == 1
 
-        test_image_hash = hashlib.sha256(open(test_image_path, 'rb').read()).digest()
-        server_image_hash = hashlib.sha256(open(server_image_path, 'rb').read()).digest()
-        assert test_image_hash == server_image_hash
+        assert resources[0]['public_id'] == image_from_server['uuid']
 
     def test_create_item_pictures__failure_empty_title_only_spaces(self):
         user = self.create_user(superuser=True)
